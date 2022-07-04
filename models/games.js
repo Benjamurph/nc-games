@@ -10,6 +10,13 @@ exports.selectReviewById = (id) => {
     const { review_id } = id;
     return db.query(`SELECT * FROM reviews WHERE review_id = $1;`, [review_id])
     .then((result) => {
+        if (!result.rows.length) {
+            console.log('ERROR BLOCK')
+            return Promise.reject({
+                status: 404,
+                msg: `no review found under id ${review_id}`
+            });
+        }
         return result.rows[0];
     });
 };

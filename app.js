@@ -14,8 +14,14 @@ app.all('*', (req, res) => {
     res.status(404).send({ msg: '404 route not found.' });
 });
 
+
 app.use((err, req, res, next) => {
-    res.status(400).send({ msg: '400 bad request, please input a valid path.' });
+    console.log(err);
+    if(err.status) {
+        res.status(err.status).send({ msg: err.msg });
+    } else if(err.code === '22P02') {
+        res.status(400).send({ msg: 'bad request' });
+    } else next(err);
 });
 
 app.use((err, req, res, next) => {
