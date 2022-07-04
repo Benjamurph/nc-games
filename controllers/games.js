@@ -16,7 +16,5 @@ exports.getReviewById = (req, res, next) => {
         review.created_at = `${review.created_at}`
         res.status(200).send({ review })
     })
-    .catch((err) => {
-        next(err);
-    });
+    .catch(next);
 };
