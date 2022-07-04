@@ -9,7 +9,7 @@ beforeEach(() => {
 });
 
 afterAll(() => {
-    db.end();
+    return db.end();
 });
 
 describe('api/categories', () => {
@@ -25,6 +25,7 @@ describe('api/categories', () => {
             expect(body.categories.length).toBe(4);
         });
     });
+
     test('404 status: receives the message "404 route not found." when presented with an invalid path', () => {
       return request(app)
       .get('/api/vategories')
@@ -62,4 +63,16 @@ describe('api/reviews/:review_id', () => {
         expect(body.msg).toBe('400 bad request, please input a valid path.');
       });
     });  
+    
+});
+
+describe('404 error handling', () => {
+    test('404 status: receives the message "404 route not found." when presented with an invalid path', () => {
+        return request(app)
+        .get('/api/vategories')
+        .expect(404)
+        .then(({body}) => {
+          expect(body.msg).toBe('404 route not found.');
+        });       
+      });
 });
