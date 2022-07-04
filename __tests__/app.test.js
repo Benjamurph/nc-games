@@ -28,7 +28,7 @@ describe('api/categories', () => {
     
 });
 
-decribe('404 error handling', () => {
+describe('404 error handling', () => {
     test('404 status: receives the message "404 route not found." when presented with an invalid path', () => {
         return request(app)
         .get('/api/vategories')
