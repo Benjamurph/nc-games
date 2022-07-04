@@ -25,6 +25,44 @@ describe('api/categories', () => {
             expect(body.categories.length).toBe(4);
         });
     });
+
+    test('404 status: receives the message "404 route not found." when presented with an invalid path', () => {
+      return request(app)
+      .get('/api/vategories')
+      .expect(404)
+      .then(({body}) => {
+        expect(body.msg).toBe('404 route not found.');
+      });        
+    });
+});
+
+describe('api/reviews/:review_id', () => {
+    test('200 status: returns the review that corresponds to the input review_id', () => {
+      return request(app)
+      .get('/api/reviews/1')
+      .expect(200)
+      .then(({body}) => {
+        expect(body.review).toEqual( {
+            review_id: 1,
+            title: 'Agricola',
+            category: 'euro game',
+            designer: 'Uwe Rosenberg',
+            owner: 'mallionaire',
+            review_body: 'Farmyard fun!',
+            review_img_url: 'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
+            created_at: 'Mon Jan 18 2021 10:00:20 GMT+0000 (Greenwich Mean Time)',
+            votes: 1
+          });;
+      });
+    });
+    test('400 status: returns the message "400 bad request, please input a valid path." when presented with a path that doesn\'t exist', () => {
+        return request(app)
+      .get('/api/reviews/999')
+      .expect(400)
+      .then(({body}) => {
+        expect(body.msg).toBe('400 bad request, please input a valid path.');
+      });
+    });  
     
 });
 
