@@ -179,3 +179,31 @@ describe('PATCH api/reviews/:review_id', () => {
         });
     });
 });
+
+describe('GET api/users', () => {
+  describe('happy path', () => {
+    test('GET 200: responds with an array of users', () => {
+        return request(app)
+        .get('/api/users')
+        .expect(200)
+        .then(({body}) => {
+          expect(body.users.length).toBe(4);
+          body.users.forEach(user => {
+            expect(user).toHaveProperty('username');
+            expect(user).toHaveProperty('name');
+            expect(user).toHaveProperty('avatar_url');
+          });
+        });
+    });
+  });
+  describe('error handling', () => {
+    test('404 status: receives the message "404 route not found." when presented with an invalid path', () => {
+      return request(app)
+      .get('/api/isers')
+      .expect(404)
+      .then(({body}) => {
+        expect(body.msg).toBe('404 route not found.');
+      });
+    });
+  });
+});
