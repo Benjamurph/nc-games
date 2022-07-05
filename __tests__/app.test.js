@@ -255,3 +255,79 @@ describe('GET api/reviews/:review_id/comments', () => {
     });
   });
 });
+
+describe('POST api/reviews/:review_id/comments', () => {
+  describe('happy path', () => {
+    test('201 status: adds a comment belonging to the input review_id and returns the added comment', () => {
+      const newComment = {
+        body: 'You SUCK at making board games!',
+        author: 'philippaclaire9',
+      }
+      return request(app)
+      .post('/api/reviews/1/comments')
+      .send(newComment)
+      .expect(201)
+      .then(({body}) => {
+        expect(body.comment).toHaveProperty('comment_id');
+        expect(body.comment).toHaveProperty('body');
+        expect(body.comment).toHaveProperty('votes');
+        expect(body.comment).toHaveProperty('author');
+        expect(body.comment).toHaveProperty('review_id');
+        expect(body.comment).toHaveProperty('created_at');
+      });
+    });
+  });
+  describe('error handling', () => {
+    test('404 status: returns the message "no review found under id __" when presented with a path that does not exist', () => {
+      const newComment = {
+        body: 'You SUCK at making board games!',
+        author: 'philippaclaire9',
+      };
+      return request(app)
+      .post('/api/reviews/999/comments')
+      .send(newComment)
+      .expect(404)
+      .then(({body}) => {
+        expect(body.msg).toBe('no review found under id 999');
+      });
+    });
+    test('400 status: returns the message "Invalid post request, please reformat your post" when the new comment has no author or body', () => {
+      const newComment = {
+        body: 'You SUCK at making board games!'
+        };
+        return request(app)
+      .post('/api/reviews/1/comments')
+      .send(newComment)
+      .expect(400)
+      .then(({body}) => {
+          expect(body.msg).toBe('Invalid post request, please reformat your post');
+      });
+  });
+    test('400 status: returns the message "Invalid post request, please reformat your post" when the new comment has a body or author that\'s not a sring', () => {
+      const newComment = {
+        body: 'You SUCK at making board games!',
+        author: 9
+        };
+        return request(app)
+      .post('/api/reviews/1/comments')
+      .send(newComment)
+      .expect(400)
+      .then(({body}) => {
+          expect(body.msg).toBe('Invalid post request, please reformat your post');
+      });
+    });
+    test('400 status: returns the message "Invalid post request, please reformat your post" when the new comment has a body or author that\'s not a sring', () => {
+      const newComment = {
+        body: 'You SUCK at making board games!',
+        author: 'philippaclaire9'
+        };
+        return request(app)
+      .post('/api/reviews/notanumber/comments')
+      .send(newComment)
+      .expect(400)
+      .then(({body}) => {
+          expect(body.msg).toBe('bad request');
+      });
+    });
+  });
+});

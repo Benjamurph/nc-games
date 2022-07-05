@@ -5,7 +5,8 @@ const { getCategories,
         updateReview,
         getUsers,
         getReviews,
-        getCommentsByReviewId
+        getCommentsByReviewId,
+        postComment
       } = require('./controllers/games');
 
 const app = express();
@@ -17,6 +18,7 @@ app.patch('/api/reviews/:review_id', updateReview);
 app.get('/api/users', getUsers);
 app.get('/api/reviews', getReviews);
 app.get('/api/reviews/:review_id/comments', getCommentsByReviewId);
+app.post('/api/reviews/:review_id/comments', postComment);
 
 app.all('*', (req, res) => {
     res.status(404).send({ msg: '404 route not found.' });
