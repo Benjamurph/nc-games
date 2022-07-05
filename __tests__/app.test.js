@@ -41,22 +41,23 @@ describe('GET api/categories', () => {
 
 describe('GET api/reviews/:review_id', () => {
     describe('happy paths', () => {
-        test('200 status: returns the review that corresponds to the input review_id', () => {
+        test.only('200 status: returns the review that corresponds to the input review_id, including comment count', () => {
             return request(app)
-            .get('/api/reviews/1')
+            .get('/api/reviews/2')
             .expect(200)
             .then(({body}) => {
-              expect(body.review).toEqual( {
-                  review_id: 1,
-                  title: 'Agricola',
-                  category: 'euro game',
-                  designer: 'Uwe Rosenberg',
-                  owner: 'mallionaire',
-                  review_body: 'Farmyard fun!',
-                  review_img_url: 'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
-                  created_at: 'Mon Jan 18 2021 10:00:20 GMT+0000 (Greenwich Mean Time)',
-                  votes: 1
-                });
+              expect(body.review).toEqual({
+                review_id: 2,
+                title: 'Jenga',
+                category: 'dexterity',
+                designer: 'Leslie Scott',
+                owner: 'philippaclaire9',
+                review_body: 'Fiddly fun for all the family',
+                review_img_url: 'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
+                created_at: "Mon Jan 18 2021 10:01:41 GMT+0000 (Greenwich Mean Time)",
+                votes: 5,
+                comment_count: 3
+              });
             });
           });
     });
