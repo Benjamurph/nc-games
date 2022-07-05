@@ -41,7 +41,7 @@ describe('GET api/categories', () => {
 
 describe('GET api/reviews/:review_id', () => {
     describe('happy paths', () => {
-        test.only('200 status: returns the review that corresponds to the input review_id, including comment count', () => {
+        test('200 status: returns the review that corresponds to the input review_id, including comment count', () => {
             return request(app)
             .get('/api/reviews/2')
             .expect(200)
@@ -195,6 +195,32 @@ describe('GET api/users', () => {
             expect(user).toHaveProperty('avatar_url');
           });
         });
+    });
+  });
+});
+
+describe('GET api/reviews', () => {
+  describe('happy path', () => {
+    test('200 status: returns an array of reviews, including comment_count', () => {
+      return request(app)
+      .get('/api/reviews')
+      .expect(200)
+      .then(({body}) => {
+        expect(body.reviews.length).toBe(13);
+        expect(body.reviews).toBeSortedBy('created_at', {descending: true})
+        body.reviews.forEach(review => {
+          expect(review).toHaveProperty('review_id');
+          expect(review).toHaveProperty('title');
+          expect(review).toHaveProperty('designer');
+          expect(review).toHaveProperty('owner');
+          expect(review).toHaveProperty('review_img_url');
+          expect(review).toHaveProperty('review_body');
+          expect(review).toHaveProperty('category');
+          expect(review).toHaveProperty('created_at');
+          expect(review).toHaveProperty('votes');
+          expect(review).toHaveProperty('comment_count');
+        });
+      })
     });
   });
 });

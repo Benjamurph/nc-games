@@ -49,3 +49,15 @@ exports.selectUsers = () => {
         return results.rows;
     });
 };
+
+exports.selectReviews = () => {
+    return db.query(`SELECT reviews.*, COUNT(comments.review_id) AS comment_count
+    FROM reviews
+    LEFT JOIN comments ON reviews.review_id = comments.review_id
+    GROUP BY reviews.review_id
+    ORDER BY reviews.created_at DESC;`)
+    .then((reviews) => {
+        reviews.rows.forEach(review => review.comment_count = parseInt(review.comment_count));
+        return reviews.rows;
+    });
+};
