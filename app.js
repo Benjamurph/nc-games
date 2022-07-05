@@ -3,7 +3,8 @@ const express = require('express');
 const { getCategories,
         getReviewById,
         updateReview,
-        getUsers
+        getUsers,
+        getReviews
       } = require('./controllers/games');
 
 const app = express();
@@ -13,6 +14,7 @@ app.get('/api/categories', getCategories);
 app.get('/api/reviews/:review_id', getReviewById);
 app.patch('/api/reviews/:review_id', updateReview);
 app.get('/api/users', getUsers);
+app.get('/api/reviews', getReviews);
 
 app.all('*', (req, res) => {
     res.status(404).send({ msg: '404 route not found.' });
@@ -20,7 +22,7 @@ app.all('*', (req, res) => {
 
 
 app.use((err, req, res, next) => {
-    console.log(err);
+    // console.log(err);
     if(err.status) {
         res.status(err.status).send({ msg: err.msg });
     } else if(err.code === '22P02') {
