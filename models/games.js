@@ -22,7 +22,7 @@ exports.selectReviewById = (id) => {
 
 exports.updateVotes = (newVotes, id) => {
   const { review_id } = id;
-  if (!newVotes.hasOwnProperty('inc_votes') || Object.keys(newVotes).length > 1  || isNaN(newVotes.inc_votes)) {
+  if (!newVotes.hasOwnProperty('inc_votes') || isNaN(newVotes.inc_votes)) {
     return Promise.reject({
         status: 400,
         msg: 'Invalid patch request, please reformat your patch'

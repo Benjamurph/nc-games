@@ -23,6 +23,7 @@ exports.getReviewById = (req, res, next) => {
 exports.updateReview = (req, res, next) => {
     updateVotes(req.body, req.params).then((review) => {
         review.created_at = `${review.created_at}`;
+        console.log({review})
         res.status(200).send({ review });
     })
     .catch(next);

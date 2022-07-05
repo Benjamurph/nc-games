@@ -104,6 +104,29 @@ describe('PATCH api/reviews/:review_id', () => {
               });
           });
         });
+        test('PATCH 200: updates an existing review to increase or decrease the review/s votes by the given amount, ignores extra properties on the patch', () => {
+          const newVote = {
+              inc_votes: 1,
+              name: 'Mitch'
+            }
+            return request(app)
+          .patch('/api/reviews/1')
+          .send(newVote)
+          .expect(200)
+          .then(({body}) => {
+              expect(body.review).toEqual({
+                review_id: 1,
+                title: 'Agricola',
+                category: 'euro game',
+                designer: 'Uwe Rosenberg',
+                owner: 'mallionaire',
+                review_body: 'Farmyard fun!',
+                review_img_url: 'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
+                created_at: 'Mon Jan 18 2021 10:00:20 GMT+0000 (Greenwich Mean Time)',
+                votes: 2
+              });
+          });
+      });
     });
     describe('error handling', () => {
         test('404 status: returns the message "400 not found, please input a valid path." when presented with a path that doesn\'t exist', () => {
@@ -132,19 +155,6 @@ describe('PATCH api/reviews/:review_id', () => {
         });
         test('400 status: returns the message "Invalid patch request, please reformat your patch" when the patch does not contain "inc_votes"', () => {
             const newVote = {
-                name: 'Mitch'
-              }
-              return request(app)
-            .patch('/api/reviews/1')
-            .send(newVote)
-            .expect(400)
-            .then(({body}) => {
-                expect(body.msg).toBe('Invalid patch request, please reformat your patch');
-            });
-        });
-        test('400 status: returns the message "Invalid patch request, please reformat your patch" when the patch contains extra properties', () => {
-            const newVote = {
-                inc_votes: 1,
                 name: 'Mitch'
               }
               return request(app)
