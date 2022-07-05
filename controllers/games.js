@@ -1,6 +1,7 @@
 const { selectCategories,
         selectReviewById,
-        updateVotes
+        updateVotes,
+        selectUsers
       } = require('../models/games');
 
 exports.getCategories = (req, res, next) => {
@@ -23,8 +24,16 @@ exports.getReviewById = (req, res, next) => {
 exports.updateReview = (req, res, next) => {
     updateVotes(req.body, req.params).then((review) => {
         review.created_at = `${review.created_at}`;
-        console.log({review})
         res.status(200).send({ review });
     })
     .catch(next);
 };
+
+exports.getUsers= (req, res, next) => {
+    selectUsers().then((users) => {
+      res.status(200).send({ users });
+    })
+    .catch((err) => {
+      next(err);
+    });
+  };
