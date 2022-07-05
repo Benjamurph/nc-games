@@ -2,7 +2,8 @@ const { selectCategories,
         selectReviewById,
         updateVotes,
         selectUsers,
-        selectReviews
+        selectReviews,
+        selectCommentsByReviewId
       } = require('../models/games');
 
 exports.getCategories = (req, res, next) => {
@@ -46,4 +47,13 @@ exports.getUsers= (req, res, next) => {
     .catch((err) => {
       next(err);
     });
+  };
+
+  
+exports.getCommentsByReviewId = (req, res, next) => {
+    selectCommentsByReviewId(req.params).then((comments) => {
+      comments.created_at = `${comments.created_at}`;
+      res.status(200).send({ comments })
+    })
+    .catch(next);
   };

@@ -61,3 +61,17 @@ exports.selectReviews = () => {
         return result.rows;
     });
 };
+
+exports.selectCommentsByReviewId = (id) => {
+    const { review_id } = id;
+    return db.query(`SELECT * FROM comments WHERE review_id = $1;`, [review_id])
+    .then((results) => {
+        if (!results.rows.length) {
+            return Promise.reject({
+                status: 404,
+                msg: `no review found under id ${review_id}`
+            });
+        };
+        return results.rows;
+    });
+};
