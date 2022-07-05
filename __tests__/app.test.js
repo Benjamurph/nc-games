@@ -316,5 +316,18 @@ describe('POST api/reviews/:review_id/comments', () => {
           expect(body.msg).toBe('Invalid post request, please reformat your post');
       });
     });
+    test('400 status: returns the message "Invalid post request, please reformat your post" when the new comment has a body or author that\'s not a sring', () => {
+      const newComment = {
+        body: 'You SUCK at making board games!',
+        author: 'philippaclaire9'
+        };
+        return request(app)
+      .post('/api/reviews/notanumber/comments')
+      .send(newComment)
+      .expect(400)
+      .then(({body}) => {
+          expect(body.msg).toBe('bad request');
+      });
+    });
   });
 });
