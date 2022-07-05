@@ -62,7 +62,7 @@ describe('GET api/reviews/:review_id', () => {
           });
     });
     describe('error handling', () => {
-        test('404 status: returns the message "400 not found, please input a valid path." when presented with a path that doesn\'t exist', () => {
+        test('404 status: returns the message "no review found under id __" when presented with a path that doesn\'t exist', () => {
             return request(app)
           .get('/api/reviews/999')
           .expect(404)
@@ -130,7 +130,7 @@ describe('PATCH api/reviews/:review_id', () => {
       });
     });
     describe('error handling', () => {
-        test('404 status: returns the message "400 not found, please input a valid path." when presented with a path that doesn\'t exist', () => {
+        test('404 status: returns the message "no review found under id __" when presented with a path that doesn\'t exist', () => {
             const newVote = {
                 inc_votes : 1
               }
@@ -220,7 +220,38 @@ describe('GET api/reviews', () => {
           expect(review).toHaveProperty('votes');
           expect(review).toHaveProperty('comment_count');
         });
-      })
+      });
+    });
+  });
+});
+
+describe('GET api/reviews/:review_id/comments', () => {
+  describe('happy path', () => {
+    test('200 status: responds with an array of comments belonging to the review id', () => {
+      return request(app)
+      .get('/api/reviews/2/comments')
+      .expect(200)
+      .then(({body}) => {
+        expect(body.comments.length).toBe(3)
+        body.comments.forEach(comment => {
+          expect(comment).toHaveProperty('comment_id');
+          expect(comment).toHaveProperty('body');
+          expect(comment).toHaveProperty('votes');
+          expect(comment).toHaveProperty('author');
+          expect(comment).toHaveProperty('review_id');
+          expect(comment).toHaveProperty('created_at');
+        });
+      });
+    });
+  });
+  describe('error handling', () => {
+    test('404 status: returns the message "no review found under id __" when presented with a path that does not exist', () => {
+      return request(app)
+      .get('/api/reviews/999/comments')
+      .expect(404)
+      .then(({body}) => {
+        expect(body.msg).toBe('no review found under id 999');
+      });
     });
   });
 });
