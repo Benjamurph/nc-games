@@ -56,8 +56,8 @@ exports.selectReviews = () => {
     LEFT JOIN comments ON reviews.review_id = comments.review_id
     GROUP BY reviews.review_id
     ORDER BY reviews.created_at DESC;`)
-    .then((reviews) => {
-        reviews.rows.forEach(review => review.comment_count = parseInt(review.comment_count));
-        return reviews.rows;
+    .then((result) => {
+        result.rows.forEach(review => review.comment_count = parseInt(review.comment_count));
+        return result.rows;
     });
 };
