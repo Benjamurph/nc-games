@@ -75,3 +75,33 @@ exports.selectCommentsByReviewId = (id) => {
         return results.rows;
     });
 };
+
+exports.insertComment = (newComment, id) => {
+    if (!newComment.hasOwnProperty('body') || !newComment.hasOwnProperty('author') || typeof newComment.body !== 'string' || typeof newComment.author !== 'string') {
+        return Promise.reject({
+            status: 400,
+            msg: 'Invalid post request, please reformat your post'
+        });
+      };
+    newComment.votes = 0;
+    newComment.review_id = id.review_id;
+    newComment.created_at = new Date(Date.now());
+    const { body, author, votes, review_id, created_at } = newComment;
+    return db.query(`SELECT * FROM reviews WHERE review_id = $1`, [review_id])
+    .then((result) => {
+        if (!result.rows.length) {
+            return Promise.reject({
+                status: 404,
+                msg: `no review found under id ${review_id}`
+            });
+        };
+
+    return db.query(`INSERT INTO comments (body, author, votes, review_id, created_at) VALUES ($1, $2, $3, $4, $5) RETURNING *;`, [body, author, votes, review_id, created_at])
+    .then((result) => {
+     
+     return result.rows[0];
+    });
+    })
+ 
+    
+ };
