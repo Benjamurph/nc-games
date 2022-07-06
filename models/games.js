@@ -59,7 +59,7 @@ exports.selectUsers = () => {
   });
 };
 
-exports.selectReviews = (sort_by = "created_at", order = "desc", category = '') => {
+exports.selectReviews = (sort_by = "created_at", order = "desc", category) => {
   const sortOptions = [
     "review_id",
     "title",
@@ -72,9 +72,10 @@ exports.selectReviews = (sort_by = "created_at", order = "desc", category = '') 
     "votes",
     "comment_count",
   ];
-  const sortOrder = ["asc", "desc"];
+  
+  const sortOrder = ["asc", "desc", "ASC", "DESC"];
   const categoryList = [];
-  let where = `WHERE reviews.category = '${category}'`;
+  let where = `WHERE reviews.category = $1`
   if(!category) {
       where = '';
   };
@@ -94,31 +95,39 @@ exports.selectReviews = (sort_by = "created_at", order = "desc", category = '') 
   };
 
   return db
-    .query("SELECT categories.slug FROM categories;")
-    .then((result) => {
-      result.rows.forEach((category) => {
-        categoryList.push(category.slug);
-      });
-    })
-    .then(() => {
-        if (!categoryList.includes(category) && category !== '') {
-            return Promise.reject({
-              status: 404,
-              msg: `No reviews found under the category name: ${category}`,
-            });
-          };
-          return db.query(
-         `SELECT reviews.*, COUNT(comments.review_id) AS comment_count
-          FROM reviews
-          LEFT JOIN comments ON reviews.review_id = comments.review_id
-          ${where}
-          GROUP BY reviews.review_id
-          ORDER BY reviews.${sort_by} ${order};`)
-          .then((result) => {
-              result.rows.forEach(review => review.comment_count = parseInt(review.comment_count));
-              return result.rows;
-          });
+  .query("SELECT categories.slug FROM categories;")
+  .then((result) => {
+    result.rows.forEach((category) => {
+      categoryList.push(category.slug);
     });
+  })
+  .then(() => {
+    let queryString =
+     `SELECT reviews.*, COUNT(comments.review_id) AS comment_count
+      FROM reviews
+      LEFT JOIN comments ON reviews.review_id = comments.review_id`;
+    if (category) {
+      queryString +=
+       ` WHERE reviews.category = $1
+         GROUP BY reviews.review_id
+         ORDER BY ${sort_by} ${order};`;
+
+      return db.query(queryString, [category]).then((result) => {
+        if (!result.rows.length && !categoryList.includes(category)) {
+          return Promise.reject({
+            status: 404,
+            msg: `No reviews found under the category name: ${category}`,
+          });
+        }
+        return result.rows;
+      });
+    } else {
+      queryString += ` GROUP BY reviews.review_id ORDER BY ${sort_by} ${order};`;
+      return db.query(queryString).then((result) => {
+        return result.rows;
+      });
+    };
+  });
 };
 
 exports.selectCommentsByReviewId = (id) => {

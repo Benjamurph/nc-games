@@ -246,14 +246,6 @@ describe('GET api/reviews', () => {
         expect(body.reviews).toBeSortedBy('votes', {ascending: true});
       });
     });
-    test('200 status: reviews can be sorted by ascending with a non-default sort_by', () => {
-      return request(app)
-      .get('/api/reviews?sort_by=review_id&order=asc')
-      .expect(200)
-      .then(({body}) => {
-        expect(body.reviews).toBeSortedBy('review_id', {ascending: true});
-      });
-    });
     test('200 status: able to use a search term to respond with only reviews belonging to the input category', () => {
       return request(app)
       .get('/api/reviews?category=social+deduction')
@@ -266,7 +258,8 @@ describe('GET api/reviews', () => {
     });
     test('200 status: returns an empty array when the input category exists but is not included in any of the reviews', () => {
       return request(app)
-      .get("/api/reviews?category=children+games")
+      .get("/api/reviews")
+      .query({category: "children's games"})
       .expect(200)
       .then(({body}) => {
          expect(body.reviews).toEqual([]);
@@ -392,7 +385,7 @@ describe('POST api/reviews/:review_id/comments', () => {
           expect(body.msg).toBe('Invalid post request, please reformat your post');
       });
     });
-    test('400 status: returns the message "Invalid post request, please reformat your post" when the new comment has a body or author that\'s not a sring', () => {
+    test('400 status: returns the message "bad request" when review_id is not a number', () => {
       const newComment = {
         body: 'You SUCK at making board games!',
         author: 'philippaclaire9'
