@@ -227,23 +227,31 @@ describe('GET api/reviews', () => {
       .get('/api/reviews?sort_by=review_id')
       .expect(200)
       .then(({body}) => {
-        expect(body.reviews).toBeSortedBy('review_id', {descending: true})
+        expect(body.reviews).toBeSortedBy('review_id', {descending: true});
       });
     });
     test('200 status: reviews can be sorted by ascending', () => {
       return request(app)
-      .get('/api/reviews?sort_order=asc')
+      .get('/api/reviews?order=asc')
       .expect(200)
       .then(({body}) => {
-        expect(body.reviews).toBeSortedBy('created_at', {ascending: true})
+        expect(body.reviews).toBeSortedBy('created_at', {ascending: true});
       });
     });
     test('200 status: reviews can be sorted by ascending with a non-default sort_by', () => {
       return request(app)
-      .get('/api/reviews?sort_by=votes&sort_order=asc')
+      .get('/api/reviews?sort_by=votes&order=asc')
       .expect(200)
       .then(({body}) => {
-        expect(body.reviews).toBeSortedBy('votes', {ascending: true})
+        expect(body.reviews).toBeSortedBy('votes', {ascending: true});
+      });
+    });
+    test('200 status: reviews can be sorted by ascending with a non-default sort_by', () => {
+      return request(app)
+      .get('/api/reviews?sort_by=review_id&order=asc')
+      .expect(200)
+      .then(({body}) => {
+        expect(body.reviews).toBeSortedBy('review_id', {ascending: true});
       });
     });
     test('200 status: able to use a search term to respond with only reviews belonging to the input category', () => {
@@ -252,34 +260,42 @@ describe('GET api/reviews', () => {
       .expect(200)
       .then(({body}) => {
         body.reviews.forEach(review => {
-          expect(review.category).toEqual('social deduction')
+          expect(review.category).toEqual('social deduction');
         });
+      });
+    });
+    test('200 status: returns an empty array when the input category exists but is not included in any of the reviews', () => {
+      return request(app)
+      .get("/api/reviews?category=children+games")
+      .expect(200)
+      .then(({body}) => {
+         expect(body.reviews).toEqual([]);
       });
     });
   });
   describe('error handling', () => {
-    test('404 status: returns the message "Invalid sort query, ___ does not exist" when that column doesn\t exist', () => {
+    test('400 status: returns the message "Invalid sort query, ___ does not exist" when that column doesn\t exist', () => {
       return request(app)
       .get('/api/reviews?sort_by=totes')
-      .expect(404)
+      .expect(400)
       .then(({body}) => {
-        expect(body.msg).toBe('Invalid sort query, totes does not exist')
+        expect(body.msg).toBe('Invalid sort query, totes does not exist');
       });
     });
-    test('404 status: returns the message "Invalid sort order query" when asked to be sorted by something other that asc or desc', () => {
+    test('400 status: returns the message "Invalid sort order query" when asked to be sorted by something other that asc or desc', () => {
       return request(app)
-      .get('/api/reviews?sort_order=asce')
-      .expect(404)
+      .get('/api/reviews?order=asce')
+      .expect(400)
       .then(({body}) => {
-        expect(body.msg).toBe('Invalid sort order query')
+        expect(body.msg).toBe('Invalid sort order query');
       });
     });
-    test('404 status: returns the message "No reviews found under the category name: ____" when asked to filter a categort that doesn\t exist', () => {
+    test('404 status: returns the message "No reviews found under the category name: ____" when asked to filter a categort that doesn\'t exist', () => {
       return request(app)
       .get('/api/reviews?category=category')
       .expect(404)
       .then(({body}) => {
-        expect(body.msg).toBe('No reviews found under the category name: category')
+        expect(body.msg).toBe('No reviews found under the category name: category');
       });
     });
   });
@@ -322,7 +338,7 @@ describe('POST api/reviews/:review_id/comments', () => {
       const newComment = {
         body: 'You SUCK at making board games!',
         author: 'philippaclaire9',
-      }
+      };
       return request(app)
       .post('/api/reviews/1/comments')
       .send(newComment)
