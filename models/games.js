@@ -50,13 +50,42 @@ exports.selectUsers = () => {
     });
 };
 
-exports.selectReviews = () => {
+exports.selectReviews = (sort_by = 'created_at', sort_order = 'desc', category = '') => {
+    const sortOptions = ['review_id', 'title', 'designer', 'owner', 'review_img_url', 'review_body', 'category', 'created_at', 'votes', 'comment_count'];
+    const order = ['asc', 'desc'];
+    let where = `WHERE reviews.category = '${category}'`;
+    if(!category) {
+        where = '';
+    };
+
+    if (!sortOptions.includes(sort_by)) {
+        return Promise.reject({
+            status: 404,
+            msg: `Invalid sort query, ${sort_by} does not exist`
+        });
+      };
+
+    if (!order.includes(sort_order)) {
+        return Promise.reject({
+            status: 404,
+            msg: `Invalid sort order query`
+        });
+      };
+      
+
     return db.query(`SELECT reviews.*, COUNT(comments.review_id) AS comment_count
     FROM reviews
     LEFT JOIN comments ON reviews.review_id = comments.review_id
+    ${where}
     GROUP BY reviews.review_id
-    ORDER BY reviews.created_at DESC;`)
+    ORDER BY reviews.${sort_by} ${sort_order};`)
     .then((result) => {
+        if (!result.rows.length) {
+            return Promise.reject({
+                status: 404,
+                msg: `No reviews found under the category name: ${category}`
+            });
+        };
         result.rows.forEach(review => review.comment_count = parseInt(review.comment_count));
         return result.rows;
     });

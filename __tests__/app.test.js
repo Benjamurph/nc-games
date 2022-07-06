@@ -201,7 +201,7 @@ describe('GET api/users', () => {
 
 describe('GET api/reviews', () => {
   describe('happy path', () => {
-    test('200 status: returns an array of reviews, including comment_count', () => {
+    test('200 status: returns an array of reviews, including comment_count, reviews are sorted by created_at by default', () => {
       return request(app)
       .get('/api/reviews')
       .expect(200)
@@ -220,6 +220,66 @@ describe('GET api/reviews', () => {
           expect(review).toHaveProperty('votes');
           expect(review).toHaveProperty('comment_count');
         });
+      });
+    });
+    test('200 status: reviews can be sorted by any valid column ascending or descending', () => {
+      return request(app)
+      .get('/api/reviews?sort_by=review_id')
+      .expect(200)
+      .then(({body}) => {
+        expect(body.reviews).toBeSortedBy('review_id', {descending: true})
+      });
+    });
+    test('200 status: reviews can be sorted by ascending', () => {
+      return request(app)
+      .get('/api/reviews?sort_order=asc')
+      .expect(200)
+      .then(({body}) => {
+        expect(body.reviews).toBeSortedBy('created_at', {ascending: true})
+      });
+    });
+    test('200 status: reviews can be sorted by ascending with a non-default sort_by', () => {
+      return request(app)
+      .get('/api/reviews?sort_by=votes&sort_order=asc')
+      .expect(200)
+      .then(({body}) => {
+        expect(body.reviews).toBeSortedBy('votes', {ascending: true})
+      });
+    });
+    test('200 status: able to use a search term to respond with only reviews belonging to the input category', () => {
+      return request(app)
+      .get('/api/reviews?category=social+deduction')
+      .expect(200)
+      .then(({body}) => {
+        body.reviews.forEach(review => {
+          expect(review.category).toEqual('social deduction')
+        });
+      });
+    });
+  });
+  describe('error handling', () => {
+    test('404 status: returns the message "Invalid sort query, ___ does not exist" when that column doesn\t exist', () => {
+      return request(app)
+      .get('/api/reviews?sort_by=totes')
+      .expect(404)
+      .then(({body}) => {
+        expect(body.msg).toBe('Invalid sort query, totes does not exist')
+      });
+    });
+    test('404 status: returns the message "Invalid sort order query" when asked to be sorted by something other that asc or desc', () => {
+      return request(app)
+      .get('/api/reviews?sort_order=asce')
+      .expect(404)
+      .then(({body}) => {
+        expect(body.msg).toBe('Invalid sort order query')
+      });
+    });
+    test('404 status: returns the message "No reviews found under the category name: ____" when asked to filter a categort that doesn\t exist', () => {
+      return request(app)
+      .get('/api/reviews?category=category')
+      .expect(404)
+      .then(({body}) => {
+        expect(body.msg).toBe('No reviews found under the category name: category')
       });
     });
   });
