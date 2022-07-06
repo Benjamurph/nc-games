@@ -400,3 +400,31 @@ describe('POST api/reviews/:review_id/comments', () => {
     });
   });
 });
+
+describe('DELETE api/comments/:comment_id', () => {
+  describe('happy path', () => {
+    test('204 status: deletes the given comment by comment_id', () => {
+      return request(app)
+      .delete('/api/comments/1')
+      .expect(204)
+    });
+  });
+  describe('error handling', () => {
+    test('404 status: returns a message "No comment found under id 999" when the input comment_id does not exist', () => {
+      return request(app)
+      .delete('/api/comments/999')
+      .expect(404)
+      .then(({body}) => {
+        expect(body.msg).toBe('No comment found under id 999');
+      });
+    });
+    test('400 status: returns a message "bad request" when the input comment_id is not a number', () => {
+      return request(app)
+      .delete('/api/comments/notanumber')
+      .expect(400)
+      .then(({body}) => {
+        expect(body.msg).toBe('bad request');
+      });
+    });
+  });
+});

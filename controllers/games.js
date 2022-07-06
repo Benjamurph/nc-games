@@ -4,7 +4,8 @@ const { selectCategories,
         selectUsers,
         selectReviews,
         selectCommentsByReviewId,
-        insertComment
+        insertComment,
+        removeCommentById
       } = require('../models/games');
 
 exports.getCategories = (req, res, next) => {
@@ -65,6 +66,13 @@ exports.getCommentsByReviewId = (req, res, next) => {
     insertComment(req.body, req.params).then((comment) => {
         comment.created_at = `${comment.created_at}`;
       res.status(201).send({ comment })
+    })
+    .catch(next);
+  };
+
+  exports.deleteCommentById = (req, res, next) => {
+    removeCommentById(req.params).then((comment) => {
+      res.status(204).send({ comment })
     })
     .catch(next);
   };
