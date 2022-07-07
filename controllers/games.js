@@ -72,7 +72,7 @@ exports.getCommentsByReviewId = (req, res, next) => {
 
   exports.deleteCommentById = (req, res, next) => {
     removeCommentById(req.params).then((comment) => {
-      res.status(204).send({ comment })
+      res.status(204).send({})
     })
     .catch(next);
   };

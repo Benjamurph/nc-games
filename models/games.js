@@ -193,6 +193,5 @@ exports.removeCommentById = (id) => {
               msg: `No comment found under id ${comment_id}`,
             });
           };
-        return result.rows[0];
     });
 };
