@@ -15,7 +15,7 @@
     }
   },
   "GET /api/reviews": {
-    "description": "serves an array of all reviews",
+    "description": "serves an array of all reviews, with the ability to sort by any coloumn in ascending or descending order, as well as filter by category",
     "queries": ["category", "sort_by", "order"],
     "exampleResponse": {
       "reviews": [
@@ -30,5 +30,72 @@
         }
       ]
     }
+  },
+  "GET /api/reviews/:review_id": {
+      "description": "responds with the review that corresponds to the input review_id, including a count of all the comments on that review",
+      "queries": [],
+      "exampleResponse": {
+          "review": {
+                  "review_id": 2,
+                  "title": "Jenga",
+                  "category": "dexterity",
+                  "designer": "Leslie Scott",
+                  "owner": "philippaclaire9",
+                  "review_body": "Fiddly fun for all the family",
+                  "review_img_url": "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+                  "created_at": "Mon Jan 18 2021 10:01:41 GMT+0000 (Greenwich Mean Time)",
+                  "votes": 5,
+                  "comment_count": 3
+                }
+          }
+      },
+      "PATCH /api/reviews/:review_id": {
+        "description": "updates an existing review to increase or decrease the review/s votes by the given amount",
+        "queries": [],
+        "exampleResponse": {
+            "review": {
+                    "review_id": 2,
+                    "title": "Jenga",
+                    "category": "dexterity",
+                    "designer": "Leslie Scott",
+                    "owner": "philippaclaire9",
+                    "review_body": "Fiddly fun for all the family",
+                    "review_img_url": "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+                    "created_at": "Mon Jan 18 2021 10:01:41 GMT+0000 (Greenwich Mean Time)",
+                    "votes": 5  
+                  }
+            }
+        },
+        "GET /api/users": {
+          "description": "serves an array of all users",
+          "queries": [],
+          "exampleResponse": {
+            "reviews": [
+              {
+                "username": "mallionaire",
+                "name": "haz",
+                "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+              }
+            ]
+          }
+        },
+        "POST /api/reviews/:review_id/comments": {
+          "description": "adds a comment belonging to the input review_id and returns the added comment",
+          "queries": [],
+          "exampleResponse": {
+              "review": {
+                      "comment_id": 1,
+                      "body": "I loved this game too!",
+                      "votes": 16,
+                      "author": "mallionaire",
+                      "review_id": 3,
+                      "created_at": "Thu Jul 07 2022 10:33:23 GMT+0100 (British Summer Time)"
+                    }
+              }
+          },
+          "DELETE /api/comments/:comment_id": {
+            "description": "deletes the comment belonging to the input comment id",
+            "queries": [],
+            "exampleResponse": {}
+            }
   }
-}
