@@ -407,6 +407,12 @@ describe('DELETE api/comments/:comment_id', () => {
       return request(app)
       .delete('/api/comments/1')
       .expect(204)
+      .then((body) => {
+        return db.query('SELECT * FROM comments WHERE comment_id = 1;')
+        .then((result) => {
+          expect(result.rows.length).toBe(0);
+        });
+      });
     });
   });
   describe('error handling', () => {
