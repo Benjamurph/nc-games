@@ -232,3 +232,30 @@ exports.updateCommentVotes = (newVotes, id) => {
       return result.rows[0];
     });
 };
+
+exports.insertReview = (newReview) => {
+  if (
+    !newReview.hasOwnProperty("title") ||
+    !newReview.hasOwnProperty("designer") ||
+    !newReview.hasOwnProperty("owner") ||
+    !newReview.hasOwnProperty("review_body") ||
+    !newReview.hasOwnProperty("category") ||
+    typeof newReview.title !== "string" ||
+    typeof newReview.designer !== "string" ||
+    typeof newReview.owner !== "string" ||
+    typeof newReview.review_body !== "string" ||
+    typeof newReview.category !== "string"
+  ) {
+    return Promise.reject({
+      status: 400,
+      msg: "Invalid post request, please reformat your post",
+    });
+  };
+  newReview.votes = 0;
+  newReview.created_at = new Date(Date.now());
+const { title, designer, owner, review_body, category, votes, created_at } = newReview;
+return db.query(`INSERT INTO reviews (title, designer, owner, review_body, category, votes, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *;`, [title, designer, owner, review_body, category, votes, created_at])
+.then((result) => {
+  return result.rows[0];
+});
+};

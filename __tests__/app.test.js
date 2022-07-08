@@ -555,3 +555,188 @@ describe('PATCH /api/comments/:comment_id', () => {
     });
   });
 });
+
+describe('POST /api/reviews', () => {
+  describe('happy path', () => {
+    test('201 status: responds with the newly added review', () => {
+      const newReview = {
+        title: 'Culture a Love of Agriculture With Agricola',
+        designer: 'Uwe Rosenberg',
+        owner: 'mallionaire',
+        review_body: "Few games are equiped to fill a player with such a defined sense of mild-peril, but a friendly game of Jenga will turn the mustn't-make-it-fall anxiety all the way up to 11! Fiddly fun for all the family, this game needs little explaination. Whether you're a player who chooses to play it safe, or one who lives life on the edge, eventually the removal of blocks will destabilise the tower and all your Jenga dreams come tumbling down.",
+        category: 'dexterity'
+      };
+      return request(app)
+      .post('/api/reviews')
+      .send(newReview)
+      .expect(201)
+      .then((body) => {
+        expect(body._body.review).toHaveProperty('review_id');
+        expect(body._body.review).toHaveProperty('title');
+        expect(body._body.review).toHaveProperty('designer');
+        expect(body._body.review).toHaveProperty('owner');
+        expect(body._body.review).toHaveProperty('review_body');
+        expect(body._body.review).toHaveProperty('category');
+        expect(body._body.review).toHaveProperty('votes');
+        expect(body._body.review).toHaveProperty('created_at');
+      });
+    });
+  });
+  describe('error handling', () => {
+    test('400 status: responds with the message "Invalid post request, please reformat your post" when a title is missing', () => {
+      const newReview = {
+        designer: 'Uwe Rosenberg',
+        owner: 'mallionaire',
+        review_body: "Few games are equiped to fill a player with such a defined sense of mild-peril, but a friendly game of Jenga will turn the mustn't-make-it-fall anxiety all the way up to 11! Fiddly fun for all the family, this game needs little explaination. Whether you're a player who chooses to play it safe, or one who lives life on the edge, eventually the removal of blocks will destabilise the tower and all your Jenga dreams come tumbling down.",
+        category: 'dexterity'
+      };
+      return request(app)
+      .post('/api/reviews')
+      .send(newReview)
+      .expect(400)
+      .then((body) => {
+        expect(body._body.msg).toBe('Invalid post request, please reformat your post');
+      });
+    });
+    test('400 status: responds with the message "Invalid post request, please reformat your post" when a designer is missing', () => {
+      const newReview = {
+        title: 'Culture a Love of Agriculture With Agricola',
+        owner: 'mallionaire',
+        review_body: "Few games are equiped to fill a player with such a defined sense of mild-peril, but a friendly game of Jenga will turn the mustn't-make-it-fall anxiety all the way up to 11! Fiddly fun for all the family, this game needs little explaination. Whether you're a player who chooses to play it safe, or one who lives life on the edge, eventually the removal of blocks will destabilise the tower and all your Jenga dreams come tumbling down.",
+        category: 'dexterity'
+      };
+      return request(app)
+      .post('/api/reviews')
+      .send(newReview)
+      .expect(400)
+      .then((body) => {
+        expect(body._body.msg).toBe('Invalid post request, please reformat your post');
+      });
+    });
+    test('400 status: responds with the message "Invalid post request, please reformat your post" when a owner is missing', () => {
+      const newReview = {
+        title: 'Culture a Love of Agriculture With Agricola',
+        designer: 'Uwe Rosenberg',
+        review_body: "Few games are equiped to fill a player with such a defined sense of mild-peril, but a friendly game of Jenga will turn the mustn't-make-it-fall anxiety all the way up to 11! Fiddly fun for all the family, this game needs little explaination. Whether you're a player who chooses to play it safe, or one who lives life on the edge, eventually the removal of blocks will destabilise the tower and all your Jenga dreams come tumbling down.",
+        category: 'dexterity'
+      };
+      return request(app)
+      .post('/api/reviews')
+      .send(newReview)
+      .expect(400)
+      .then((body) => {
+        expect(body._body.msg).toBe('Invalid post request, please reformat your post');
+      });
+    });
+    test('400 status: responds with the message "Invalid post request, please reformat your post" when a review_body is missing', () => {
+      const newReview = {
+        title: 'Culture a Love of Agriculture With Agricola',
+        designer: 'Uwe Rosenberg',
+        owner: 'mallionaire',
+        category: 'dexterity'
+      };
+      return request(app)
+      .post('/api/reviews')
+      .send(newReview)
+      .expect(400)
+      .then((body) => {
+        expect(body._body.msg).toBe('Invalid post request, please reformat your post');
+      });
+    });
+    test('400 status: responds with the message "Invalid post request, please reformat your post" when a category is missing', () => {
+      const newReview = {
+        title: 'Culture a Love of Agriculture With Agricola',
+        designer: 'Uwe Rosenberg',
+        owner: 'mallionaire',
+        review_body: "Few games are equiped to fill a player with such a defined sense of mild-peril, but a friendly game of Jenga will turn the mustn't-make-it-fall anxiety all the way up to 11! Fiddly fun for all the family, this game needs little explaination. Whether you're a player who chooses to play it safe, or one who lives life on the edge, eventually the removal of blocks will destabilise the tower and all your Jenga dreams come tumbling down."
+      };
+      return request(app)
+      .post('/api/reviews')
+      .send(newReview)
+      .expect(400)
+      .then((body) => {
+        expect(body._body.msg).toBe('Invalid post request, please reformat your post');
+      });
+    });
+     test('400 status: responds with the message "Invalid post request, please reformat your post" when the title is not a string', () => {
+      const newReview = {
+        title: 1,
+        designer: 'Uwe Rosenberg',
+        owner: 'mallionaire',
+        review_body: "Few games are equiped to fill a player with such a defined sense of mild-peril, but a friendly game of Jenga will turn the mustn't-make-it-fall anxiety all the way up to 11! Fiddly fun for all the family, this game needs little explaination. Whether you're a player who chooses to play it safe, or one who lives life on the edge, eventually the removal of blocks will destabilise the tower and all your Jenga dreams come tumbling down.",
+        category: 'dexterity'
+      };
+      return request(app)
+      .post('/api/reviews')
+      .send(newReview)
+      .expect(400)
+      .then((body) => {
+        expect(body._body.msg).toBe('Invalid post request, please reformat your post');
+      });
+    });
+    test('400 status: responds with the message "Invalid post request, please reformat your post" when the designer is not a string', () => {
+      const newReview = {
+        title: 'Culture a Love of Agriculture With Agricola',
+        designer: 2,
+        owner: 'mallionaire',
+        review_body: "Few games are equiped to fill a player with such a defined sense of mild-peril, but a friendly game of Jenga will turn the mustn't-make-it-fall anxiety all the way up to 11! Fiddly fun for all the family, this game needs little explaination. Whether you're a player who chooses to play it safe, or one who lives life on the edge, eventually the removal of blocks will destabilise the tower and all your Jenga dreams come tumbling down.",
+        category: 'dexterity'
+      };
+      return request(app)
+      .post('/api/reviews')
+      .send(newReview)
+      .expect(400)
+      .then((body) => {
+        expect(body._body.msg).toBe('Invalid post request, please reformat your post');
+      });
+    });
+    test('400 status: responds with the message "Invalid post request, please reformat your post" when the owner is not a string', () => {
+      const newReview = {
+        title: 'Culture a Love of Agriculture With Agricola',
+        designer: 'Uwe Rosenberg',
+        owner: 3,
+        review_body: "Few games are equiped to fill a player with such a defined sense of mild-peril, but a friendly game of Jenga will turn the mustn't-make-it-fall anxiety all the way up to 11! Fiddly fun for all the family, this game needs little explaination. Whether you're a player who chooses to play it safe, or one who lives life on the edge, eventually the removal of blocks will destabilise the tower and all your Jenga dreams come tumbling down.",
+        category: 'dexterity'
+      };
+      return request(app)
+      .post('/api/reviews')
+      .send(newReview)
+      .expect(400)
+      .then((body) => {
+        expect(body._body.msg).toBe('Invalid post request, please reformat your post');
+      });
+    });
+    test('400 status: responds with the message "Invalid post request, please reformat your post" when the review_body is not a string', () => {
+      const newReview = {
+        title: 'Culture a Love of Agriculture With Agricola',
+        designer: 'Uwe Rosenberg',
+        owner: 'mallionaire',
+        review_body: 4,
+        category: 'dexterity'
+      };
+      return request(app)
+      .post('/api/reviews')
+      .send(newReview)
+      .expect(400)
+      .then((body) => {
+        expect(body._body.msg).toBe('Invalid post request, please reformat your post');
+      });
+    });
+    test('400 status: responds with the message "Invalid post request, please reformat your post" when the category is not a string', () => {
+      const newReview = {
+        title: 'Culture a Love of Agriculture With Agricola',
+        designer: 'Uwe Rosenberg',
+        owner: 'mallionaire',
+        review_body: "Few games are equiped to fill a player with such a defined sense of mild-peril, but a friendly game of Jenga will turn the mustn't-make-it-fall anxiety all the way up to 11! Fiddly fun for all the family, this game needs little explaination. Whether you're a player who chooses to play it safe, or one who lives life on the edge, eventually the removal of blocks will destabilise the tower and all your Jenga dreams come tumbling down.",
+        category: 5
+      };
+      return request(app)
+      .post('/api/reviews')
+      .send(newReview)
+      .expect(400)
+      .then((body) => {
+        expect(body._body.msg).toBe('Invalid post request, please reformat your post');
+      });
+    });
+  });
+});

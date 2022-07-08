@@ -7,7 +7,8 @@ const { selectCategories,
         insertComment,
         removeCommentById,
         SelectUserByUsername,
-        updateCommentVotes
+        updateCommentVotes,
+        insertReview
       } = require('../models/games');
 
 const endpoints = require('../endpoints.json') ;
@@ -98,6 +99,14 @@ exports.updateComment = (req, res, next) => {
   updateCommentVotes(req.body, req.params).then((comment) => {
       comment.created_at = `${comment.created_at}`;
       res.status(200).send({ comment });
+  })
+  .catch(next);
+};
+
+exports.postReview = (req, res, next) => {
+  insertReview(req.body).then((review) => {
+    review.created_at = `${review.created_at}`;
+    res.status(201).send({review});
   })
   .catch(next);
 };
