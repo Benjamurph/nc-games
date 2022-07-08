@@ -49,10 +49,40 @@ exports.getUsers= (req, res, next) => {
   };
 
   exports.getReviews = (req, res, next) => {
-    const { sort_by, order, category } = req.query;
+    const { sort_by, order, category, limit, p } = req.query;
 
     selectReviews(sort_by, order, category).then((reviews) => {
-      res.status(200).send({ reviews });
+      totalCount = reviews.length;
+      if(p) {
+        if(isNaN(+p)) {
+          return Promise.reject({
+            status: 400,
+            msg: `Limit or page must be a number`,
+          });
+        }
+      }
+      if (limit) {
+        if (isNaN(+limit)) {
+          return Promise.reject({
+            status: 400,
+            msg: `Limit or page must be a number`,
+          });
+        };
+        const result = [];
+        let startPoint = limit * p - limit;
+        let endPoint = limit * p;
+        if (!p) {
+          startPoint = 0;
+          endPoint = limit;
+        }
+        for (let i = startPoint; i < endPoint; i++) {
+          if(reviews[i]) {
+            result.push(reviews[i]);
+          }
+        }
+        reviews = result;
+        res.status(200).send({ total_count: totalCount, reviews });
+      } else res.status(200).send({ total_count: totalCount, reviews });
     })
     .catch((err) => {
       next(err);
@@ -61,9 +91,39 @@ exports.getUsers= (req, res, next) => {
 
   
 exports.getCommentsByReviewId = (req, res, next) => {
+  const { limit, p } = req.query;
     selectCommentsByReviewId(req.params).then((comments) => {
       comments.created_at = `${comments.created_at}`;
-      res.status(200).send({ comments })
+      if(p) {
+        if(isNaN(+p)) {
+          return Promise.reject({
+            status: 400,
+            msg: `Limit or page must be a number`,
+          });
+        }
+      }
+      if (limit) {
+        if (isNaN(+limit)) {
+          return Promise.reject({
+            status: 400,
+            msg: `Limit or page must be a number`,
+          });
+        };
+        const result = [];
+        let startPoint = limit * p - limit;
+        let endPoint = limit * p;
+        if (!p) {
+          startPoint = 0;
+          endPoint = limit;
+        }
+        for (let i = startPoint; i < endPoint; i++) {
+          if(comments[i]) {
+            result.push(comments[i]);
+          }
+        }
+        comments = result;
+        res.status(200).send({ comments });
+      } else res.status(200).send({ comments });
     })
     .catch(next);
   };

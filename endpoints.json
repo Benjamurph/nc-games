@@ -16,7 +16,7 @@
   },
   "GET /api/reviews": {
     "description": "serves an array of all reviews, with the ability to sort by any coloumn in ascending or descending order, as well as filter by category",
-    "queries": ["category", "sort_by", "order"],
+    "queries": ["category", "sort_by", "order", "limit", "p"],
     "exampleResponse": {
       "reviews": [
         {
@@ -81,7 +81,7 @@
         },
         "POST /api/reviews/:review_id/comments": {
           "description": "adds a comment belonging to the input review_id and returns the added comment",
-          "queries": [],
+          "queries": ["limit", "p"],
           "exampleResponse": {
               "comment": {
                       "comment_id": 1,

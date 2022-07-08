@@ -75,10 +75,6 @@ exports.selectReviews = (sort_by = "created_at", order = "desc", category) => {
   
   const sortOrder = ["asc", "desc", "ASC", "DESC"];
   const categoryList = [];
-  let where = `WHERE reviews.category = $1`
-  if(!category) {
-      where = '';
-  };
 
   if (!sortOptions.includes(sort_by)) {
     return Promise.reject({

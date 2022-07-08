@@ -266,6 +266,23 @@ describe('GET api/reviews', () => {
          expect(body.reviews).toEqual([]);
       });
     });
+    test('200 status: returns an array containing a limited number of reviews when a limit query is added', () => {
+      return request(app)
+      .get("/api/reviews?limit=10")
+      .expect(200)
+      .then(({body}) => {
+         expect(body.reviews.length).toBe(10)
+      });
+    });
+    test('200 status: returns an array containing a limited number of reviews when a limit query is added', () => {
+      return request(app)
+      .get("/api/reviews?limit=10&p=2")
+      .expect(200)
+      .then(({body}) => {
+         expect(body.reviews.length).toBe(3);
+      });
+    });
+    
   });
   describe('error handling', () => {
     test('400 status: returns the message "Invalid sort query, ___ does not exist" when that column doesn\t exist', () => {
@@ -292,6 +309,22 @@ describe('GET api/reviews', () => {
         expect(body.msg).toBe('No reviews found under the category name: category');
       });
     });
+    test('400 status: returns the message "Limit or page must be a number" when limit is not a number', () => {
+      return request(app)
+      .get("/api/reviews?limit=ten")
+      .expect(400)
+      .then(({body}) => {
+         expect(body.msg).toBe('Limit or page must be a number');
+      });
+    });
+    test('400 status: returns the message "Limit or page must be a number" when page is not a number', () => {
+      return request(app)
+      .get("/api/reviews?limit=10&p=one")
+      .expect(400)
+      .then(({body}) => {
+         expect(body.msg).toBe('Limit or page must be a number');
+      });
+    });
   });
 });
 
@@ -313,6 +346,22 @@ describe('GET api/reviews/:review_id/comments', () => {
         });
       });
     });
+    test('200 status: responds with a limited array of comments', () => {
+      return request(app)
+      .get('/api/reviews/2/comments?limit=2')
+      .expect(200)
+      .then((body) => {
+        expect(body._body.comments.length).toBe(2);
+      });
+      });
+      test('200 status: responds with a limited array of comments seperated into pages', () => {
+        return request(app)
+        .get('/api/reviews/2/comments?limit=2&p=2')
+        .expect(200)
+        .then((body) => {
+          expect(body._body.comments.length).toBe(1);
+        });
+        });
   });
   describe('error handling', () => {
     test('404 status: returns the message "no review found under id __" when presented with a path that does not exist', () => {
@@ -323,6 +372,22 @@ describe('GET api/reviews/:review_id/comments', () => {
         expect(body.msg).toBe('no review found under id 999');
       });
     });
+    test('400 status: responds with the messasge "Limit or page must be a number" if page is not a number', () => {
+      return request(app)
+      .get('/api/reviews/2/comments?limit=2&p=two')
+      .expect(400)
+      .then((body) => {
+        expect(body._body.msg).toBe('Limit or page must be a number');
+      });
+      });
+      test('400 status: responds with the messasge "Limit or page must be a number" if limit is not a number', () => {
+        return request(app)
+        .get('/api/reviews/2/comments?limit=two&p=2')
+        .expect(400)
+        .then((body) => {
+          expect(body._body.msg).toBe('Limit or page must be a number');
+        });
+        });
   });
 });
 
