@@ -443,6 +443,34 @@ describe('GET /api', () => {
     .expect(200)
     .then((res) => {
       expect(res.body).toEqual(endpoints);
-    })
+    });
+  });
+});
+
+describe('GET /api/users/:username', () => {
+  describe('happy path', () => {
+    test('200 status: responds with the user object belonging to the passed username', () => {
+      return request(app)
+      .get('/api/users/mallionaire')
+      .expect(200)
+      .then((body) => {
+        expect(body._body.user).toEqual({
+          username: 'mallionaire',
+          name: 'haz',
+          avatar_url:
+            'https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg'
+        });
+      });
+    });
+  });
+  describe('error handling', () => {
+    test('404 status: returns the message "No user found under the username ___" when there are no users with the input username', () => {
+      return request(app)
+      .get('/api/users/ballionaire')
+      .expect(404)
+      .then((body) => {
+        expect(body._body.msg).toBe('No user found under the username ballionaire');
+      });
+    });
   });
 });

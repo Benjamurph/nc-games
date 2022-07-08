@@ -1,0 +1,39 @@
+name: Test and Deploy
+
+on:
+  push:
+     branches:
+        - main
+jobs:
+  greeting:
+    runs-on: ubuntu latest
+    steps:
+      - name: Say Hello
+        run: echo "CICD"
+  test:
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Checkout and Clone repo
+        uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: npm install
+      - name: Setup Postgres
+        uses: harmon758/postgresql-action@v1
+        with:
+          postgresql db: test_db
+          postgresql user: mr_testerson
+          postgresql password: pa55w0rd
+      - name: Run Integration Tests
+         run: PGDATABASE=test_db PGUSER=mr_testerson PGPASSWORD=pa55w0rd npm test
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout and clone repo
+        uses: actions/checkout@v2
+      - name: Deploy to Heroku
+        uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}} 
+          heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
+          heroku_email: ${{secrets.HEROKU_EMAIL}}

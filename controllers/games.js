@@ -5,7 +5,8 @@ const { selectCategories,
         selectReviews,
         selectCommentsByReviewId,
         insertComment,
-        removeCommentById
+        removeCommentById,
+        SelectUserByUsername
       } = require('../models/games');
 
 const endpoints = require('../endpoints.json') ;
@@ -82,4 +83,11 @@ exports.getCommentsByReviewId = (req, res, next) => {
 
   exports.getApi = (req, res, next) => {
     res.status(200).send(endpoints);
-  }
+  };
+
+  exports.getUserByUsername = (req, res, next) => {
+    SelectUserByUsername(req.params).then((user) => {
+      res.status(200).send({ user })
+    })
+    .catch(next);
+  };

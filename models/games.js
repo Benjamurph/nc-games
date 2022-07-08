@@ -195,3 +195,16 @@ exports.removeCommentById = (id) => {
           };
     });
 };
+
+exports.SelectUserByUsername = (user) => {
+  return db.query(`SELECT * FROM users WHERE username = $1;`, [user.username])
+  .then((result) => {
+    if (!result.rows.length) {
+      return Promise.reject({
+        status: 404,
+        msg: `No user found under the username ${user.username}`,
+      });
+    };
+    return result.rows[0];
+  });
+};
