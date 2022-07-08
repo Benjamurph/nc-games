@@ -139,7 +139,7 @@
                 }
           }
        },
-       "GET /api/reviews/:review_id/comments" {
+       "GET /api/reviews/:review_id/comments": {
         "description": "returns an array of all the comments belonging to the input review_id",
               "queries": ["limit", "p"],
               "exampleResponse": {
