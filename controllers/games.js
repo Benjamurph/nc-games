@@ -6,7 +6,8 @@ const { selectCategories,
         selectCommentsByReviewId,
         insertComment,
         removeCommentById,
-        SelectUserByUsername
+        SelectUserByUsername,
+        updateCommentVotes
       } = require('../models/games');
 
 const endpoints = require('../endpoints.json') ;
@@ -91,3 +92,12 @@ exports.getCommentsByReviewId = (req, res, next) => {
     })
     .catch(next);
   };
+
+  
+exports.updateComment = (req, res, next) => {
+  updateCommentVotes(req.body, req.params).then((comment) => {
+      comment.created_at = `${comment.created_at}`;
+      res.status(200).send({ comment });
+  })
+  .catch(next);
+};

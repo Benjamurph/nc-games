@@ -83,7 +83,7 @@
           "description": "adds a comment belonging to the input review_id and returns the added comment",
           "queries": [],
           "exampleResponse": {
-              "review": {
+              "comment": {
                       "comment_id": 1,
                       "body": "I loved this game too!",
                       "votes": 16,
@@ -107,6 +107,20 @@
                     "name": "Tom Tickle",
                     "avatar_url": "https://vignette.wikia.nocookie.net/mrmen/images/d/d6/Mr-Tickle-9a.png/revision/latest?cb=20180127221953"
                 }
+              }
+            },
+            "PATCH /api/comments/:comment_id": {
+              "description": "increases or decreases the comments votes belonging to the input comment_id and, responds with the updated comment",
+              "queries": [],
+              "exampleResponse": {
+                  "comment": {
+                    "comment_id": 1,
+                    "body": "I loved this game too!",
+                    "votes": 17,
+                    "author": "mallionaire",
+                    "review_id": 3,
+                    "created_at": "Thu Jul 07 2022 10:33:23 GMT+0100 (British Summer Time)"
+                  }
               }
             }
   }

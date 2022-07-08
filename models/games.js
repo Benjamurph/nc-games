@@ -46,7 +46,7 @@ exports.updateVotes = (newVotes, id) => {
       if (!result.rows.length) {
         return Promise.reject({
           status: 404,
-          msg: `no review found under id ${review_id}`,
+          msg: `No review found under id ${review_id}`,
         });
       }
       return result.rows[0];
@@ -207,4 +207,28 @@ exports.SelectUserByUsername = (user) => {
     };
     return result.rows[0];
   });
+};
+
+exports.updateCommentVotes = (newVotes, id) => {
+  const { comment_id } = id;
+  if (!newVotes.hasOwnProperty("inc_votes") || isNaN(newVotes.inc_votes)) {
+    return Promise.reject({
+      status: 400,
+      msg: "Invalid patch request, please reformat your patch",
+    });
+  }
+  return db
+    .query(
+      `UPDATE comments SET votes = votes + $1 WHERE comment_id = $2 RETURNING *;`,
+      [newVotes.inc_votes, comment_id]
+    )
+    .then((result) => {
+      if (!result.rows.length) {
+        return Promise.reject({
+          status: 404,
+          msg: `No comment found under id ${comment_id}`,
+        });
+      }
+      return result.rows[0];
+    });
 };

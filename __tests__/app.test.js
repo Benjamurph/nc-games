@@ -84,7 +84,7 @@ describe('GET api/reviews/:review_id', () => {
 
 describe('PATCH api/reviews/:review_id', () => {
     describe('happy path', () => {
-        test('PATCH 200: updates an existing review to increase or decrease the review/s votes by the given amount', () => {
+        test('PATCH 200: updates an existing review to increase or decrease the review\'s votes by the given amount', () => {
           const newVote = {
             inc_votes : 1
           }
@@ -131,7 +131,7 @@ describe('PATCH api/reviews/:review_id', () => {
       });
     });
     describe('error handling', () => {
-        test('404 status: returns the message "no review found under id __" when presented with a path that doesn\'t exist', () => {
+        test('404 status: returns the message "No review found under id __" when presented with a path that doesn\'t exist', () => {
             const newVote = {
                 inc_votes : 1
               }
@@ -140,7 +140,7 @@ describe('PATCH api/reviews/:review_id', () => {
           .send(newVote)
           .expect(404)
           .then(({body}) => {
-            expect(body.msg).toBe('no review found under id 999');
+            expect(body.msg).toBe('No review found under id 999');
           });
         });  
         test('400 status: returns a bad path request', () => {
@@ -470,6 +470,87 @@ describe('GET /api/users/:username', () => {
       .expect(404)
       .then((body) => {
         expect(body._body.msg).toBe('No user found under the username ballionaire');
+      });
+    });
+  });
+});
+
+describe('PATCH /api/comments/:comment_id', () => {
+  describe('happy path', () => {
+    test('200 status: updates an existing comment to increase or decrease the comment\'s votes by the given amount', () => {
+      const newVotes = { inc_votes: 1 };
+      return request(app)
+      .patch('/api/comments/1')
+      .send(newVotes)
+      .expect(200)
+      .then((body) => {
+        expect(body._body.comment).toEqual({
+          comment_id: 1,
+          body: 'I loved this game too!',
+          votes: 17,
+          author: 'bainesface',
+          review_id: 2,
+          created_at: 'Wed Nov 22 2017 12:43:33 GMT+0000 (Greenwich Mean Time)'
+        });
+      });
+    });
+    test('200 status: updates an existing comment to increase or decrease the comment\'s votes by the given amount, ignores other properties on the patch', () => {
+      const newVotes = { inc_votes: 1, body: 'new body' };
+      return request(app)
+      .patch('/api/comments/1')
+      .send(newVotes)
+      .expect(200)
+      .then((body) => {
+        expect(body._body.comment).toEqual({
+          comment_id: 1,
+          body: 'I loved this game too!',
+          votes: 17,
+          author: 'bainesface',
+          review_id: 2,
+          created_at: 'Wed Nov 22 2017 12:43:33 GMT+0000 (Greenwich Mean Time)'
+        });
+      });
+    });
+  });
+  describe('error handling', () => {
+    test('404 status: returns the message "No comment found under id __" when presented with a path that doesn\'t exist', () => {
+      const newVotes = { inc_votes: 1 };
+      return request(app)
+      .patch('/api/comments/999')
+      .send(newVotes)
+      .expect(404)
+      .then((body) => {
+        expect(body._body.msg).toEqual('No comment found under id 999')
+      });
+    });
+    test('400 status: returns the mmessage "bad request" when comment_id is not a number', () => {
+      const newVotes = { inc_votes: 1 };
+      return request(app)
+      .patch('/api/comments/number')
+      .send(newVotes)
+      .expect(400)
+      .then((body) => {
+        expect(body._body.msg).toBe('bad request')
+      });
+    });
+    test('400 status: returns the message "Invalid patch request, please reformat your patch" when given a patch that does not include inc_votes', () => {
+      const newVotes = { inc_motes: 1 };
+      return request(app)
+      .patch('/api/comments/1')
+      .send(newVotes)
+      .expect(400)
+      .then((body) => {
+        expect(body._body.msg).toBe('Invalid patch request, please reformat your patch')
+      });
+    });
+    test('400 status: returns the message "Invalid patch request, please reformat your patch" when given a patch in which inc_votes is not a number', () => {
+      const newVotes = { inc_votes: 'number' };
+      return request(app)
+      .patch('/api/comments/1')
+      .send(newVotes)
+      .expect(400)
+      .then((body) => {
+        expect(body._body.msg).toBe('Invalid patch request, please reformat your patch')
       });
     });
   });
