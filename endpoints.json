@@ -97,5 +97,16 @@
             "description": "deletes the comment belonging to the input comment id",
             "queries": [],
             "exampleResponse": {}
+            },
+            "GET /api/users/:username": {
+              "description": "responds with the user object belonging to the passed username",
+              "queries": [],
+              "exampleResponse": {
+                  "user": {
+                    "username": "tickle122",
+                    "name": "Tom Tickle",
+                    "avatar_url": "https://vignette.wikia.nocookie.net/mrmen/images/d/d6/Mr-Tickle-9a.png/revision/latest?cb=20180127221953"
+                }
+              }
             }
   }
