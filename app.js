@@ -1,5 +1,6 @@
 const { application } = require('express');
 const express = require('express');
+const cors = require('cors');
 
 const { getCategories,
         getReviewById,
@@ -16,6 +17,7 @@ const { getCategories,
       } = require('./controllers/games');
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 app.get('/api/categories', getCategories);
