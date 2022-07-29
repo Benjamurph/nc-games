@@ -805,3 +805,75 @@ describe('POST /api/reviews', () => {
     });
   });
 });
+
+describe('POST api/users', () => {
+  describe('happy path', () => {
+    test.only('201 status: adds a new user and returns the added user', () => {
+      const newUser = {
+        username: 'new user',
+        name: 'Guy',
+      };
+      return request(app)
+      .post('/api/users')
+      .send(newUser)
+      .expect(201)
+      .then(({body}) => {
+        expect(body.user).toHaveProperty('username');
+        expect(body.user).toHaveProperty('name');
+        expect(body.user).toHaveProperty('avatar_url');
+      });
+    });
+  });
+  describe('error handling', () => {
+    test('400 status: responds with the message "Invalid post request, please reformat your post" when a username is missing', () => {
+      const newUser = {
+        name: 'me'
+      };
+      return request(app)
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .then((body) => {
+        expect(body._body.msg).toBe('Invalid post request, please reformat your post');
+      });
+    });
+    test('400 status: responds with the message "Invalid post request, please reformat your post" when a name is missing', () => {
+      const newUser = {
+        username: 'me'
+      };
+      return request(app)
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .then((body) => {
+        expect(body._body.msg).toBe('Invalid post request, please reformat your post');
+      });
+    });
+    test('400 status: responds with the message "Invalid post request, please reformat your post" when username is not a string', () => {
+      const newUser = {
+        username: 1,
+        name: 'me'
+      };
+      return request(app)
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .then((body) => {
+        expect(body._body.msg).toBe('Invalid post request, please reformat your post');
+      });
+    });
+    test('400 status: responds with the message "Invalid post request, please reformat your post" when name is not a string', () => {
+      const newUser = {
+        username: 'me',
+        name: 1
+      };
+      return request(app)
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .then((body) => {
+        expect(body._body.msg).toBe('Invalid post request, please reformat your post');
+      });
+    });
+  });
+});

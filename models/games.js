@@ -256,3 +256,26 @@ return db.query(`INSERT INTO reviews (title, designer, owner, review_body, categ
   return result.rows[0];
 });
 };
+
+exports.insertUser = (newUser) => {
+  if (
+    !newUser.hasOwnProperty("username") ||
+    !newUser.hasOwnProperty("name") ||
+    typeof newUser.username !== "string" ||
+    typeof newUser.name !== "string"
+  ) {
+    return Promise.reject({
+      status: 400,
+      msg: "Invalid post request, please reformat your post",
+    });
+  };
+
+  if (!newUser.avatar_url) {
+    newUser.avatar_url = 'https://icon-library.com/images/default-profile-icon/default-profile-icon-6.jpg'
+  }
+  const {username, name, avatar_url} = newUser;
+  return db.query(`INSERT INTO users (username, name, avatar_url) VALUES ($1, $2, $3) RETURNING *;`, [username, name, avatar_url])
+  .then((result) => {
+    return result.rows[0]
+  });
+};
