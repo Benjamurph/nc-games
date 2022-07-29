@@ -128,18 +128,27 @@ exports.selectReviews = (sort_by = "created_at", order = "desc", category) => {
 
 exports.selectCommentsByReviewId = (id) => {
   const { review_id } = id;
-  return db
+
+  return db.query(`SELECT * FROM reviews WHERE review_id = $1
+  ORDER BY created_at desc;`, [review_id])
+  .then((results) => {
+    if (!results.rows.length) {
+      return Promise.reject({
+        status: 404,
+        msg: `No review found under id ${review_id}`,
+      });
+    }
+  })
+  .then(() => {
+    return db
     .query(`SELECT * FROM comments WHERE review_id = $1
             ORDER BY created_at desc;`, [review_id])
     .then((results) => {
-      if (!results.rows.length) {
-        return Promise.reject({
-          status: 404,
-          msg: `no review found under id ${review_id}`,
-        });
-      }
+      
       return results.rows;
     });
+  })
+  
 };
 
 exports.insertComment = (newComment, id) => {

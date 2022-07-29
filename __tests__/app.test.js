@@ -364,12 +364,12 @@ describe('GET api/reviews/:review_id/comments', () => {
         });
   });
   describe('error handling', () => {
-    test('404 status: returns the message "no review found under id __" when presented with a path that does not exist', () => {
+    test('404 status: returns the message "No review found under id __" when presented with a path that does not exist', () => {
       return request(app)
       .get('/api/reviews/999/comments')
       .expect(404)
       .then(({body}) => {
-        expect(body.msg).toBe('no review found under id 999');
+        expect(body.msg).toBe('No review found under id 999');
       });
     });
     test('400 status: responds with the messasge "Limit or page must be a number" if page is not a number', () => {
