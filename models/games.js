@@ -129,7 +129,8 @@ exports.selectReviews = (sort_by = "created_at", order = "desc", category) => {
 exports.selectCommentsByReviewId = (id) => {
   const { review_id } = id;
   return db
-    .query(`SELECT * FROM comments WHERE review_id = $1;`, [review_id])
+    .query(`SELECT * FROM comments WHERE review_id = $1
+            ORDER BY created_at desc;`, [review_id])
     .then((results) => {
       if (!results.rows.length) {
         return Promise.reject({
