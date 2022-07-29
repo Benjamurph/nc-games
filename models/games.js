@@ -233,12 +233,10 @@ exports.updateCommentVotes = (newVotes, id) => {
 exports.insertReview = (newReview) => {
   if (
     !newReview.hasOwnProperty("title") ||
-    !newReview.hasOwnProperty("designer") ||
     !newReview.hasOwnProperty("owner") ||
     !newReview.hasOwnProperty("review_body") ||
     !newReview.hasOwnProperty("category") ||
     typeof newReview.title !== "string" ||
-    typeof newReview.designer !== "string" ||
     typeof newReview.owner !== "string" ||
     typeof newReview.review_body !== "string" ||
     typeof newReview.category !== "string"
